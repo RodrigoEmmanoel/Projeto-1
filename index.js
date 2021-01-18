@@ -69,6 +69,37 @@ const accessSheet = async () => {
     }
 
     main()
+    //// authorization
+    async function authorize() {
+        // TODO: Change placeholder below to generate authentication credentials. See
+        // https://developers.google.com/sheets/quickstart/nodejs#step_3_set_up_the_sample
+        //
+        // Authorize using one of the following scopes:
+        //   'https://www.googleapis.com/auth/drive'
+        //   'https://www.googleapis.com/auth/drive.file'
+        //   'https://www.googleapis.com/auth/drive.readonly'
+        //   'https://www.googleapis.com/auth/spreadsheets'
+        //   'https://www.googleapis.com/auth/spreadsheets.readonly'
+        const { client_secret, client_id, redirect_uris } = credentials;
+        const oAuth2Client = new google.auth.OAuth2(
+            client_id, client_secret, redirect_uris);
+
+        // Check if we have previously stored a token.
+        fs.readFile('./credentials.json', (err, token) => {
+            if (err) return getNewToken(oAuth2Client, callback);
+            oAuth2Client.setCredentials(JSON.parse(token));
+            callback(oAuth2Client);
+        });
+
+        let authClient = oAuth2Client;
+
+        if (authClient == null) {
+            throw Error('authentication failed');
+        }
+
+        return authClient;
+    }
+    // end authorization
 }
 
 accessSheet()
